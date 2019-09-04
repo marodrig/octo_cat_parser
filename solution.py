@@ -1,7 +1,23 @@
-import sys
+import os
 import datetime
 import heapq
 from collections import namedtuple
+
+
+def file_location_user():
+    """
+    Ask user for file name.
+    """
+    cwd = os.getcwd()
+    print("Please keep in mind your current location when opening data file: \n Current working directory: {0}\n".format(cwd))
+    print("Type QUIT to exit.\n")
+    file_location = input("Please enter the file name: ")
+    if file_location and file_location != 'QUIT':
+        parse_input_file(file_location)
+    elif file_location == 'QUIT':
+        exit(1)
+    else:
+        raise IOError("File name can't be empty.")
 
 
 def parse_input_file(file_name):
@@ -55,6 +71,8 @@ def nice_print(py_count_dict):
         py_lst = []
 
 
-
-parse_input_file(file_name='data1.txt')
+try:
+    file_location_user()
+except IOError as ioe:
+    print("Error: {}".format(ioe))
 
