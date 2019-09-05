@@ -9,7 +9,7 @@ def file_location_user():
     Ask user for file name.
     """
     cwd = os.getcwd()
-    print("Please keep in mind your current location when opening data file: \n Current working directory: {0}\n".format(cwd))
+    print("Please keep in mind your current location when opening data file:\nCurrent working directory: {0}\n".format(cwd))
     print("Type QUIT to exit.\n")
     file_location = input("Please enter the file name: ")
     if file_location and file_location != 'QUIT':
@@ -22,7 +22,7 @@ def file_location_user():
 
 def parse_input_file(file_name):
     """
-    test
+    Read input from file and store in a min Heap.
     """
     py_heap = []
     Record = namedtuple('Record', ['epoch', 'url'])
@@ -36,6 +36,7 @@ def parse_input_file(file_name):
 
 def create_counter_dict(py_heap):
     """
+    Populate a dictionary of dictionaries from the min heap.
     """
     py_count_dict = {}
     while py_heap:
@@ -53,6 +54,7 @@ def create_counter_dict(py_heap):
 
 def nice_print(py_count_dict):
     """
+    Print the url/ hit count from the dictionary for each date, in decreasing order of hit count.
     """
     py_lst = []
     for key, value in py_count_dict.items():
