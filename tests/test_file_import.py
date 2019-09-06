@@ -1,7 +1,7 @@
 import unittest
 
 
-class AnalyticsTestCase(unittest.TestCase):
+class SolutionTestCase(unittest.TestCase):
     """
     """
 

@@ -9,18 +9,26 @@ def file_location_user():
     Ask user for file name.
     """
     cwd = os.getcwd()
+    file_location = ''
+    token = ''
+    print("Usage:\nEnter the location of the data file, followed by the separator used in the file.")
     print("Please keep in mind your current location when opening data file:\nCurrent working directory: {0}\n".format(cwd))
     print("Type QUIT to exit.\n")
-    file_location = input("Please enter the file name: ")
+    user_args = input("Please enter the file name: ").split()
+    if len(user_args) < 2:
+        token = '|'
+    else:
+        token = user_args[1]
+    file_location = user_args[0]
     if file_location and file_location != 'QUIT':
-        return file_location
+        return file_location, token
     elif file_location == 'QUIT':
         exit(1)
     else:
         raise IOError("File name can't be empty.")
 
 
-def parse_input_file(file_name):
+def parse_input_file(file_name, token):
     """
     Read input from file and store in a min Heap.
     """
@@ -28,10 +36,15 @@ def parse_input_file(file_name):
     Record = namedtuple('Record', ['epoch', 'url'])
     with open(file_name, 'r') as infile:
         for line in infile:
-            (epoch_time, url) = line.split('|')
+            if token not in line:
+                raise ValueError('Token: {0} not found in {1}.'.format(token, line.strip()))
+            (epoch_time, url) = line.split(token.strip())
             rec = Record(epoch=float(epoch_time), url=url.strip())
             heapq.heappush(py_heap, rec)
-    create_counter_dict(py_heap)
+    if py_heap:
+        return py_heap
+    else:
+        raise ValueError('Empty min heap.')
 
 
 def create_counter_dict(py_heap):
@@ -82,8 +95,12 @@ def nice_print(py_count_dict):
         raise ValueError('Dictionary cannot be None.')
 
 
+file_location, token = '', ''
 try:
-    file_location = file_location_user()
-except IOError as ioe:
-    print("Error: {}".format(ioe))
+    file_location, token = file_location_user()
+    pyt_heap = parse_input_file(file_location, token)
+    py_count_dict = create_counter_dict(pyt_heap)
+    nice_print(py_count_dict)
+except (IOError, ValueError) as err:
+    print("Error: {}".format(err))
 
