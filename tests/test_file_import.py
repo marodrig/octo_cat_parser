@@ -11,16 +11,23 @@ class SolutionTestCase(unittest.TestCase):
         """
         self.soln = Solution()
 
-    def test_file_opening(self):
+    def test_data_file_correctly_parsed(self):
         """
         """
         py_heap = self.soln.parse_input_file('data1.txt', '|')
         self.assertIsNotNone(py_heap)
 
-    def test_file_opening_raises_exception_for_incorrect_name(self):
+    def test_data_file_parsing_raises_file_not_found_exception_for_not_existing_file(self):
         """
         """
-        self.assertRaises(FileNotFoundError, self.soln.parse_input_file('cat.txt', token='|'))
+        with self.assertRaises(FileNotFoundError):
+            self.soln.parse_input_file('cat.txt', '|')
+
+    def test_data_file_parsing_raises_value_error_exception_incorrect_token(self):
+        """
+        """
+        with self.assertRaises(ValueError):
+            self.soln.parse_input_file('data1.txt', ':')
 
     def tearDown(self):
         """
