@@ -34,7 +34,7 @@ class Solution():
         cwd = os.getcwd()
         file_location = ''
         token = ''
-        print("Usage:\nEnter the location of the data file, followed by the separator used in the file.")
+        print("Usage:\nEnter the location of the data file, followed by the separator used in the file.\n")
         print("Please keep in mind your current location when opening data file:\nCurrent working directory: {0}\n".format(cwd))
         print("Type QUIT to exit.\n")
         user_args = input("Please enter the file name: ").split()
@@ -67,7 +67,6 @@ class Solution():
             return py_heap
         else:
             raise ValueError('Empty min heap.')
-
 
     def create_counter_dict(self, py_heap):
         """
