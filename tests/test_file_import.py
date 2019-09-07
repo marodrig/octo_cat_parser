@@ -10,6 +10,7 @@ class SolutionTestCase(unittest.TestCase):
         """
         """
         self.soln = Solution()
+        return super().setUp()
 
     def test_data_file_correctly_parsed(self):
         """
