@@ -1,9 +1,12 @@
 import unittest
+from collections import namedtuple
 from solution import Solution
 
 
 class SolutionTestCase(unittest.TestCase):
     """
+    Run from the command line
+    python3 -m unittest tests/test_file_import.py -v
     """
 
     def setUp(self):
@@ -29,6 +32,21 @@ class SolutionTestCase(unittest.TestCase):
         """
         with self.assertRaises(ValueError):
             self.soln.parse_input_file('data1.txt', ':')
+
+    def test_create_dictionary_from_heap(self):
+        """
+        """
+        py_heap = self.soln.parse_input_file('data1.txt', '|')
+        py_dictionary = self.soln.create_counter_dict(py_heap)
+        self.assertIsNotNone(py_dictionary)
+
+    def test_overflow_exception_raised_for_incorrect_epoch_time(self):
+        """
+        """
+        Record = namedtuple('Record', ['epoch', 'url'])
+        py_heap = [Record(epoch=float(-100), url='www.nba.com')]
+        with self.assertRaises(OverflowError):
+            py_dict = self.soln.create_counter_dict(py_heap)
 
     def tearDown(self):
         """

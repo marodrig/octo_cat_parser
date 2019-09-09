@@ -6,7 +6,7 @@ import heapq
 from collections import namedtuple
 
 
-class Solution():
+class Solution(object):
     """
     """
     def __init__(self):
@@ -46,7 +46,7 @@ class Solution():
         if file_location and file_location != 'QUIT':
             return file_location, token
         elif file_location == 'QUIT':
-            exit(1)
+            exit(0)
         else:
             raise IOError("File name can't be empty.")
 
@@ -80,6 +80,7 @@ class Solution():
             except (OverflowError, ValueError) as e:
                 print(e)
                 print(e.args)
+                exit(1)
             if not py_count_dict or date_stamp not in py_count_dict.keys():
                 py_count_dict[date_stamp] = {rec.url: 1}
             elif date_stamp in py_count_dict.keys() and rec.url not in py_count_dict[date_stamp].keys():
