@@ -1,4 +1,5 @@
 """
+Solution to the coding challenge
 """
 import os
 import datetime
@@ -8,14 +9,17 @@ from collections import namedtuple
 
 class Solution(object):
     """
+    Solution for the coding challenge
     """
     def __init__(self):
         """
+        Initialization of the class
         """
         pass
 
     def start_main(self):
         """
+        Begins execution of the solution to the coding challenge
         """
         file_location, token = '', ''
         try:

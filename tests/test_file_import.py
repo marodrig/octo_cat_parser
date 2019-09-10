@@ -1,3 +1,6 @@
+"""
+Test case for the coding challenge solution
+"""
 import unittest
 from collections import namedtuple
 from solution import Solution
