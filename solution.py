@@ -3,7 +3,6 @@ Solution to the coding challenge
 """
 import os
 import datetime
-import heapq
 from collections import namedtuple
 
 
@@ -15,7 +14,9 @@ class Solution(object):
         """
         Initialization of the class
         """
-        pass
+        self.epoch_lst = []
+        self.date_to_freq_dict = dict()
+        super().__init__()
 
     def start_main(self):
         """
@@ -24,9 +25,8 @@ class Solution(object):
         file_location, token = '', ''
         try:
             file_location, token = self.file_location_user()
-            pyt_heap = self.parse_input_file(file_location, token)
-            py_count_dict = self.create_counter_dict(pyt_heap)
-            self.nice_print(py_count_dict)
+            self.parse_input_file(file_location, token)
+            self.nice_print()
         except (IOError, ValueError) as err:
             print("Error: {}".format(err))
             print(err.args)
@@ -58,66 +58,80 @@ class Solution(object):
         """
         Read input from file and store in a min Heap.
         """
-        py_heap = []
         Record = namedtuple('Record', ['epoch', 'url'])
         with open(file_name, 'r') as infile:
             for line in infile:
-                if token not in line:
-                    raise ValueError('Token: {0} not found in {1}.'.format(token, line.strip()))
-                (epoch_time, url) = line.split(token.strip())
-                rec = Record(epoch=float(epoch_time), url=url.strip())
-                heapq.heappush(py_heap, rec)
-        if py_heap:
-            return py_heap
-        else:
-            raise ValueError('Empty min heap.')
+                if line.strip():
+                    if token not in line:
+                        raise ValueError('Token: {0} not found in {1}.'.format(token, line.strip()))
+                    (epoch_time, url) = line.split(token.strip())
+                    rec = Record(epoch=float(epoch_time), url=url.strip())
+                    self.epoch_lst.append(rec.epoch)
+                    self.create_counter_dict(rec)
 
-    def create_counter_dict(self, py_heap):
+    def create_counter_dict(self, rec):
         """
         Populate a dictionary of dictionaries from the min heap.
         """
-        py_count_dict = {}
-        while py_heap:
-            rec = heapq.heappop(py_heap)
+        date_stamp = ''
+        if rec:
             try:
                 date_stamp = datetime.datetime.fromtimestamp(rec.epoch).strftime('%m/%d/%Y GMT') 
             except (OverflowError, ValueError) as e:
                 print(e)
                 print(e.args)
                 exit(1)
-            if not py_count_dict or date_stamp not in py_count_dict.keys():
-                py_count_dict[date_stamp] = {rec.url: 1}
-            elif date_stamp in py_count_dict.keys() and rec.url not in py_count_dict[date_stamp].keys():
-                py_count_dict[date_stamp][rec.url] = 1 
-            elif date_stamp in py_count_dict.keys() and py_count_dict[date_stamp][rec.url]:
-                py_count_dict[date_stamp][rec.url] += 1
-        if py_count_dict:
-            return py_count_dict
-        else:
-            raise ValueError('Could not build a dictionary.')
+            if date_stamp not in self.date_to_freq_dict.keys():
+                self.date_to_freq_dict[date_stamp] = [{rec.url: 1},
+                                                  {int(1): {rec.url}},
+                                                  int(1)]
+            else:
+                dict_entry = self.date_to_freq_dict[date_stamp]
+                if rec.url in dict_entry[0].keys():
+                    prev_hit_cnt = dict_entry[0][rec.url]
+                    # remove url from set of previous hit cnt
+                    dict_entry[1][prev_hit_cnt].discard(rec.url)
+                    # increate the hit count of the url
+                    dict_entry[0][rec.url] += 1
+                    # add url to set of corresponding hit count
+                    curr_hit_cnt = dict_entry[0][rec.url]
+                    if curr_hit_cnt in dict_entry[1]:
+                        dict_entry[1][curr_hit_cnt].add(rec.url)
+                    else:
+                        dict_entry[1][curr_hit_cnt] = {rec.url}
+                else:
+                    dict_entry[0][rec.url] = 1
+                    dict_entry[1][1].add(rec.url)
+                # update the max number of hits for the current date_stamp
+                if dict_entry[0][rec.url] > self.date_to_freq_dict[date_stamp][2]:
+                    self.date_to_freq_dict[date_stamp][2] = dict_entry[0][rec.url]
+            if not self.date_to_freq_dict:
+                raise ValueError('Could not build a dictionary.')
 
-    def nice_print(self, py_count_dict):
+    def nice_print(self):
         """
         Print the url/ hit count from the dictionary for each date, in decreasing order of hit count.
         """
-        py_lst = []
-        if py_count_dict:
-            for key, value in py_count_dict.items():
-                # Print date first
-                print(key)
-                # iterate dictionary values for a specific date, and add them to a list.
-                for url, count in value.items():
-                    py_lst.append((url, count))
-                # O(N*logN)
-                # Sort the list of url/hit tuples in decreasing order.
-                py_lst.sort(key=lambda tup: tup[1], reverse=True)
-                # - iterate and print each element in the list.
-                for rec in py_lst:
-                    print("url: {0} Hit count: {1}".format(rec[0], rec[1]))
-                # empty list for next date.
-                py_lst = []
-        else:
-            raise ValueError('Dictionary cannot be None.')
+        self.epoch_lst.sort()
+        date_lst = map(lambda x: datetime.datetime.fromtimestamp(x).strftime('%m/%d/%Y GMT'), self.epoch_lst)
+        for date in date_lst:
+            if date in self.date_to_freq_dict.keys():
+                print(date)
+                url_hit_cnt = self.date_to_freq_dict[date][0]
+                hit_to_url_dict = self.date_to_freq_dict[date][1]
+                curr_num_hits = self.date_to_freq_dict[date][2]
+                while hit_to_url_dict[curr_num_hits]:
+                    url_from_set = hit_to_url_dict[curr_num_hits].pop()
+                    url_hits = url_hit_cnt[url_from_set]
+                    print("{0} {1}".format(url_from_set, url_hits))
+                    # decrease the number of hits if the current bucket is empty
+                    if not hit_to_url_dict[curr_num_hits]:
+                        curr_num_hits -= 1
+                    # if we get to 0 we break from while loop
+                    if curr_num_hits == 0:
+                        break
+                # clear the entry in the dictionary for the date
+                del self.date_to_freq_dict[date]
 
 
 if __name__ == "__main__":
