@@ -67,7 +67,11 @@ class Solution(object):
             for line in infile:
                 if line.strip():
                     if token not in line:
-                        raise ValueError('Token: {0} not found in {1}.'.format(token, line.strip()))
+                        raise ValueError(
+                              'Token: {0} not found in {1}.'.format(
+                                  token,
+                                  line.strip()
+                                  ))
                     (epoch_time, url) = line.split(token.strip())
                     rec = self.Record(epoch=float(epoch_time), url=url.strip())
                     self.epoch_lst.append(rec.epoch)
@@ -118,7 +122,11 @@ class Solution(object):
         Print the url/ hit count from the dictionary for each date, in decreasing order of hit count.
         """
         self.epoch_lst.sort()
-        date_lst = map(lambda x: datetime.datetime.fromtimestamp(x).strftime('%m/%d/%Y GMT'), self.epoch_lst)
+        date_lst = map(
+            lambda x: datetime.datetime.fromtimestamp(x).strftime(
+                self.DATE_FMT),
+                self.epoch_lst
+            )
         for date in date_lst:
             if date in self.date_to_freq_dict.keys():
                 print(date)
