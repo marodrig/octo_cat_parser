@@ -1,5 +1,7 @@
 """
 Solution to the coding challenge
+
+To run type: python3 solution.py and follow usage instructions
 """
 import os
 import datetime
@@ -11,6 +13,7 @@ class Solution(object):
     Solution for the coding challenge
     """
     DATE_FMT = '%m/%d/%Y GMT'
+
     def __init__(self):
         """
         Initialization of the class
@@ -33,7 +36,7 @@ class Solution(object):
             self.parse_input_file(file_location, token)
             self.nice_print()
         except (IOError, ValueError) as err:
-            print("Error: {}".format(err))
+            print("Error: {0}".format(err))
             print(err.args)
 
     def file_location_user(self):
@@ -61,7 +64,7 @@ class Solution(object):
 
     def parse_input_file(self, file_name, token):
         """
-        Read input from file and store in a min Heap.
+        Parse date file using a token as separator
         """
         with open(file_name, 'r') as infile:
             for line in infile:
@@ -85,10 +88,11 @@ class Solution(object):
         if rec:
             try:
                 date_stamp = datetime.datetime.fromtimestamp(rec.epoch).strftime(self.DATE_FMT)
-            except (OverflowError, ValueError) as e:
+            except (OverflowError, ValueError, OSError) as e:
+                raise e
                 print(e)
                 print(e.args)
-                exit(1)
+                # exit(1)
             if date_stamp not in self.date_to_freq_dict.keys():
                 self.date_to_freq_dict[date_stamp] = [
                     {rec.url: 1},
@@ -121,6 +125,10 @@ class Solution(object):
         """
         Print the url/ hit count from the dictionary for each date, in decreasing order of hit count.
         """
+        if not self.epoch_lst:
+            raise ValueError('Empty list of Linux Epochs.')
+        if not self.date_to_freq_dict:
+            raise ValueError('Empty dictinary of hit count to url.')
         self.epoch_lst.sort()
         date_lst = map(
             lambda x: datetime.datetime.fromtimestamp(x).strftime(
@@ -145,6 +153,10 @@ class Solution(object):
                         break
                 # clear the entry in the dictionary for the date
                 del self.date_to_freq_dict[date]
+        # clear our data structures if the GC wants to check
+        if self.date_to_freq_dict == {}:
+            self.date_to_freq_dict = None
+            self.epoch_lst = None
 
 
 if __name__ == "__main__":
