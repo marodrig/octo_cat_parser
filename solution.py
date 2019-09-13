@@ -14,6 +14,7 @@ class Solution(object):
         """
         Initialization of the class
         """
+        self.Record = namedtuple('Record', ['epoch', 'url'])
         self.epoch_lst = []
         self.date_to_freq_dict = dict()
         super().__init__()
@@ -58,14 +59,13 @@ class Solution(object):
         """
         Read input from file and store in a min Heap.
         """
-        Record = namedtuple('Record', ['epoch', 'url'])
         with open(file_name, 'r') as infile:
             for line in infile:
                 if line.strip():
                     if token not in line:
                         raise ValueError('Token: {0} not found in {1}.'.format(token, line.strip()))
                     (epoch_time, url) = line.split(token.strip())
-                    rec = Record(epoch=float(epoch_time), url=url.strip())
+                    rec = self.Record(epoch=float(epoch_time), url=url.strip())
                     self.epoch_lst.append(rec.epoch)
                     self.create_counter_dict(rec)
 
