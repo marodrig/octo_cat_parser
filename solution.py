@@ -10,12 +10,16 @@ class Solution(object):
     """
     Solution for the coding challenge
     """
+    DATE_FMT = '%m/%d/%Y GMT'
     def __init__(self):
         """
         Initialization of the class
         """
         self.Record = namedtuple('Record', ['epoch', 'url'])
         self.epoch_lst = []
+        # Mapping of data
+        #  Date               url: hits               hits: set of urls, high_hit_count
+        # {'08/08/2014 GMT': [{'www.reddit.com': 1}, {1:{'www.reddit.com'}}, 1]
         self.date_to_freq_dict = dict()
         super().__init__()
 
@@ -67,24 +71,25 @@ class Solution(object):
                     (epoch_time, url) = line.split(token.strip())
                     rec = self.Record(epoch=float(epoch_time), url=url.strip())
                     self.epoch_lst.append(rec.epoch)
-                    self.create_counter_dict(rec)
+                    self.add_record_to_dict(rec)
 
-    def create_counter_dict(self, rec):
+    def add_record_to_dict(self, rec):
         """
-        Populate a dictionary of dictionaries from the min heap.
+        Add record to our dictionaries
         """
         date_stamp = ''
         if rec:
             try:
-                date_stamp = datetime.datetime.fromtimestamp(rec.epoch).strftime('%m/%d/%Y GMT') 
+                date_stamp = datetime.datetime.fromtimestamp(rec.epoch).strftime(self.DATE_FMT)
             except (OverflowError, ValueError) as e:
                 print(e)
                 print(e.args)
                 exit(1)
             if date_stamp not in self.date_to_freq_dict.keys():
-                self.date_to_freq_dict[date_stamp] = [{rec.url: 1},
-                                                  {int(1): {rec.url}},
-                                                  int(1)]
+                self.date_to_freq_dict[date_stamp] = [
+                    {rec.url: 1},
+                    {int(1): {rec.url}},
+                    int(1)]
             else:
                 dict_entry = self.date_to_freq_dict[date_stamp]
                 if rec.url in dict_entry[0].keys():
