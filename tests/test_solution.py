@@ -8,7 +8,6 @@ from solution import Solution
 class SolutionTestCase(unittest.TestCase):
     """
     Run from the command line
-    
     python3 -m unittest tests/test_solution.py -v
     """
 
@@ -42,7 +41,8 @@ class SolutionTestCase(unittest.TestCase):
 
     def test_none_existing_directory_raises_FileNotFoundError(self):
         """
-        Test FileNotFoundException is raised if a non existing directory is used
+        Test FileNotFoundException is raised if
+        non existing directory is used
         """
         with self.assertRaises(FileNotFoundError):
             self.soln.parse_input_file('py-data/data1.txt', '|')
@@ -126,7 +126,8 @@ class SolutionTestCase(unittest.TestCase):
 
     def test_empty_list_of_epochs_raises_ValueError(self):
         """
-        Test an exception is raised if the list of epochs is empty when printing to stdout
+        Test an exception is raised if the list of epochs
+        is empty when printing to stdout
         """
         self.soln.epoch_lst = None
         with self.assertRaises(ValueError):
@@ -148,7 +149,8 @@ class SolutionTestCase(unittest.TestCase):
         
     def test_empty_hit_count_dictionary_raises_ValueError(self):
         """
-        Test an exception is raised if dictionary is None when printing to stdout
+        Test an exception is raised if dictionary is None
+        when printing to stdout
         """
         self.soln.date_to_freq_dict = None
         with self.assertRaises(ValueError):
