@@ -20,8 +20,8 @@ class Solution(object):
         """
         self.Record = namedtuple('Record', ['epoch', 'url'])
         self.epoch_lst = []
-        # Mapping of data
-        #  Date               url: hits               hits: set of urls, high_hit_count
+        # Representation of data
+        # Date:              [ {url: hits   },       {hits: set of urls}, int -> high_hit_count ]
         # {'08/08/2014 GMT': [{'www.reddit.com': 1}, {1:{'www.reddit.com'}}, 1]
         self.date_to_freq_dict = dict()
         super().__init__()
@@ -123,7 +123,8 @@ class Solution(object):
 
     def nice_print(self):
         """
-        Print the url/ hit count from the dictionary for each date, in decreasing order of hit count.
+        Print the url/ hit count from the dictionary for each date,
+        in decreasing order of hit count.
         """
         if not self.epoch_lst:
             raise ValueError('Empty list of Linux Epochs.')
