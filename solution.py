@@ -133,7 +133,7 @@ class Solution(object):
         date_lst = map(
             lambda x: datetime.datetime.fromtimestamp(x).strftime(
                 self.DATE_FMT),
-                self.epoch_lst
+            self.epoch_lst
             )
         for date in date_lst:
             if date in self.date_to_freq_dict.keys():
