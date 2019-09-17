@@ -9,7 +9,7 @@ class SolutionTestCase(unittest.TestCase):
     """
     Run from the command line
     
-    python3 -m unittest tests/test_file_import.py -v
+    python3 -m unittest tests/test_solution.py -v
     """
 
     def setUp(self):
